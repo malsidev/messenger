@@ -1,0 +1,20 @@
+fastapi==0.117.1
+uvicorn==0.37.0
+pydantic==2.11.9
+sqlalchemy==2.0.44
+alembic==1.14.1
+asyncpg==0.31.0
+psycopg==3.2.13
+python-dotenv==1.2.1
+python-jose[cryptography]==3.3.0  # или PyJWT, если используете его
+passlib==1.7.4
+bcrypt==4.3.0
+kafka-python==2.3.0
+httpx==0.28.1
+joserfc==1.7.2
+
+alembic == 1.14.1
+Mako==1.2.3
+typing-extensions==4.15.0
+greenlet==3.2.4
+MarkupSafe==3.0.3

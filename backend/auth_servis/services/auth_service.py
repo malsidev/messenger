@@ -64,7 +64,10 @@ async def get_me(user_id: int, db: AsyncSession):
         raise HTTPException(status_code=404, detail="Пользователь не найден")
 
     print("USER ID =", user_id)
-    return user
+    return {
+        "id": user.id,
+        "email": user.username,
+    }
 
 
 

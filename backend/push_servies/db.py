@@ -11,4 +11,9 @@ async def get_db() -> AsyncGenerator[AsyncSession, None]:
         try:
             yield session
         finally:
-            await session.close() 
+            await session.close()
+
+async def get_ws_db():
+
+    async with AsyncSessionLocal() as session:
+        yield session

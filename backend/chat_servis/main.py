@@ -2,10 +2,31 @@ from aiokafka import AIOKafkaProducer
 from fastapi import FastAPI
 import uvicorn 
 from fastapi.middleware.cors import CORSMiddleware
-from kafka_client import lifespan
 from routers.init import setup_routers
+from contextlib import asynccontextmanager
 
-app = FastAPI(lifespan=lifespan)
+
+from kafka_client import start_kafka, stop_kafka
+from cassandra_client import cassandra
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    await cassandra.connect()
+    await start_kafka()
+
+    yield
+
+    await stop_kafka()
+    await cassandra.close()
+
+
+
+app = FastAPI(
+    lifespan=lifespan
+)
+
+
 
 setup_routers(app) 
 

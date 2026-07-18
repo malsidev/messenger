@@ -1,6 +1,6 @@
 from aiokafka import AIOKafkaProducer, AIOKafkaConsumer
 import asyncio
-from contextlib import asynccontextmanager
+
 
 class KafkaState:
     def __init__(self):
@@ -8,21 +8,23 @@ class KafkaState:
         self.consumer = None
         self.consumer_task = None
 
+
 kafka = KafkaState()
 
 
 async def consume_messages():
+
     consumer = kafka.consumer
 
     try:
         async for msg in consumer:
             print(msg.value.decode())
+
     except asyncio.CancelledError:
         pass
 
 
-@asynccontextmanager
-async def lifespan(app):
+async def start_kafka():
 
     producer = AIOKafkaProducer(
         bootstrap_servers="kafka:9092"
@@ -35,11 +37,14 @@ async def lifespan(app):
         auto_offset_reset="earliest",
     )
 
+
     await producer.start()
     await consumer.start()
 
+
     kafka.producer = producer
     kafka.consumer = consumer
+
 
     kafka.consumer_task = asyncio.create_task(
         consume_messages()
@@ -47,19 +52,30 @@ async def lifespan(app):
 
     print("Kafka started")
 
-    try:
-        yield
 
-    finally:
+async def stop_kafka():
+
+    if kafka.consumer_task:
         kafka.consumer_task.cancel()
 
-        await consumer.stop()
-        await producer.stop()
+    if kafka.consumer:
+        await kafka.consumer.stop()
 
-        print("Kafka stopped")
+    if kafka.producer:
+        await kafka.producer.stop()
+
+
+    print("Kafka stopped")
 
 def get_producer() -> AIOKafkaProducer:
     if kafka.producer is None:
         raise RuntimeError("Producer not initialized")
 
     return kafka.producer
+
+
+def get_consumer() -> AIOKafkaConsumer:
+    if kafka.consumer is None:
+        raise RuntimeError("Consumer not initialized")
+
+    return kafka.consumer

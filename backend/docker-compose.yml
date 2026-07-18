@@ -9,6 +9,8 @@ services:
       CASSANDRA_CLUSTER_NAME: malssenger-cluster
       CASSANDRA_DC: dc1
       CASSANDRA_ENDPOINT_SNITCH: GossipingPropertyFileSnitch
+      MAX_HEAP_SIZE: 2G
+      HEAP_NEWSIZE: 512M
     volumes:
       - cassandra_data:/var/lib/cassandra
 
@@ -102,6 +104,9 @@ services:
     build:
       context: ./storage_servis
 
+    ports:
+      - "8002:8002"
+
     volumes:
       - ./storage_servis:/storage_servis
 
@@ -113,10 +118,14 @@ services:
     depends_on:
       kafka:
         condition: service_healthy
+      cassandra:
+        condition: service_started
       
   push:
     build:
       context: ./push_servies
+    ports:
+      - "8003:8003"
 
     volumes:
       - ./push_servies:/push_servies

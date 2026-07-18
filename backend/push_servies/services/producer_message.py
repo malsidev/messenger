@@ -3,23 +3,25 @@ import asyncio
 import json
 from uuid import uuid4
 from datetime import datetime, timezone
+import uuid
 
 from kafka_client import get_producer
 
 
-async def producer_message(data):
-    print(f'в продусере вот такие данные {data}')
+async def producer_message(chat_id, text, sender_id, sender_name, receiver_id):
+    print(f'в продусере вот такие данные {chat_id}, {text}, {sender_id}, {sender_name}')
     producer = get_producer()
     try:
         # Добавляем id и нормализуем created_at
         created_at = datetime.now(timezone.utc)
-        
+        message_id = uuid.uuid4()
         payload = {
-            "id": data.id,
-            "chat_id": data.chat_id,
-            "text": data.text,
-            "sender_id": data.sender_id,
-            "sender_name": data.sender_name,
+            "id": str(message_id),
+            "chat_id": chat_id,
+            "text": text,
+            "sender_id": sender_id,
+            "sender_name": sender_name,
+            "receiver_id": receiver_id,
             "created_at": created_at.isoformat()
         }
         
@@ -27,7 +29,8 @@ async def producer_message(data):
             "message",
             json.dumps(payload, ensure_ascii=False).encode("utf-8")
         )
-        return {"status": "sent", "id": data.id}
+        
+        return {"status": "sent", "id": str(message_id)}
     
     except Exception as e:
         print(f"Error sending message: {e}")

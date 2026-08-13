@@ -1,0 +1,51 @@
+QWidget {
+    background-color: #121212;
+    color: white;
+    font-size: 14px;
+}
+
+
+QPushButton {
+    background-color: #3498db;
+    color:white;
+    border-radius:10px;
+    padding:10px;
+}
+
+
+QPushButton:hover {
+    background-color:#2980b9;
+}
+
+
+QLineEdit {
+    background:#222;
+    color:white;
+    border:1px solid #555;
+    border-radius:8px;
+    padding:8px;
+}
+
+
+QListWidget {
+    background:#181818;
+    color:white;
+    border:none;
+}
+
+QSplitter {
+    background: transparent;
+}
+
+QSplitter::handle {
+    background-color: #2f2f2f;
+    border: 1px solid #444444;
+}
+
+QSplitter::handle:horizontal {
+    width: 6px;
+}
+
+QSplitter::handle:vertical {
+    height: 6px;
+}
